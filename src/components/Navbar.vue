@@ -6,6 +6,13 @@
           <a class="navbar-item has-text-weight-medium" href="#">
             Weather-Vue-App
           </a>
+
+          <a class="navbar-item" href="#">
+            Home
+          </a>
+          <a class="navbar-item" href="#">
+            Countries
+          </a>
         </div>
       </div>
     </nav>
