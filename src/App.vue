@@ -3,6 +3,7 @@
     <navBar></navBar>
 
     <div class="section">
+      <h2 class="title has-text-centered">Know the climate of your city</h2>
       <section>
         <div class="field is-grouped">
           <div class="control is-expanded">
@@ -11,7 +12,7 @@
               type="text"
               name="city"
               id="city"
-              placeholder="Search your city"
+              placeholder="Search your city..."
               class="input is-dark"
             />
           </div>
