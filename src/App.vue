@@ -27,7 +27,7 @@
       <!-- city cards -->
       <section class="mt-5">
         <div class="columns is-multiline">
-          <div v-for="city in cities" :key="city.code" class="column is-4">
+          <div v-for="city in cities" :key="city.sys.id" class="column is-4">
             <city-card :city="city" @remove="removeCity(city)"></city-card>
           </div>
         </div>
@@ -59,29 +59,31 @@ export default {
 
   methods: {
     async fetchWeatherData() {
-      try {
-        const response = await axios.get(
-          `http://api.openweathermap.org/data/2.5/weather?q=${this.cityName}&appid=${apiKey}`
-        );
-        const city = response.data;
-        console.log(city);
+      if (this.cityName) {
+        try {
+          const response = await axios.get(
+            `http://api.openweathermap.org/data/2.5/weather?q=${this.cityName}&appid=${apiKey}`
+          );
+          const city = response.data;
 
-        // Kelvin degrees to Celsius
-        let temp = city.main.temp;
-        temp = parseFloat(temp - 273.15).toFixed(2);
-        city.main.temp = temp;
+          // Kelvin degrees to Celsius
+          let temp = city.main.temp;
+          temp = parseFloat(temp - 273.15).toFixed(2);
+          city.main.temp = temp;
 
-        let temp_min = city.main.temp_min;
-        temp_min = parseFloat(temp_min - 273.15).toFixed(2);
-        city.main.temp_min = temp_min;
+          let temp_min = city.main.temp_min;
+          temp_min = parseFloat(temp_min - 273.15).toFixed(2);
+          city.main.temp_min = temp_min;
 
-        let temp_max = city.main.temp_max;
-        temp_max = parseFloat(temp_max - 273.15).toFixed(2);
-        city.main.temp_max = temp_max;
+          let temp_max = city.main.temp_max;
+          temp_max = parseFloat(temp_max - 273.15).toFixed(2);
+          city.main.temp_max = temp_max;
 
-        this.cities.push(city);
-      } catch (error) {
-        console.log(error.code);
+          this.cities.push(city);
+          this.cityName = null;
+        } catch (error) {
+          console.log(error.code);
+        }
       }
     },
 
