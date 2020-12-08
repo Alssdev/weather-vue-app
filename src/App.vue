@@ -27,8 +27,8 @@
       <!-- city cards -->
       <section class="mt-5">
         <div class="columns is-multiline">
-          <div v-for="city in cities" :key="city.id" class="column is-4">
-            <city-card :city="city"></city-card>
+          <div v-for="city in cities" :key="city.code" class="column is-4">
+            <city-card :city="city" @remove="removeCity(city)"></city-card>
           </div>
         </div>
       </section>
@@ -83,6 +83,10 @@ export default {
       } catch (error) {
         console.log(error.code);
       }
+    },
+
+    removeCity(city) {
+      this.cities.splice(this.cities.indexOf(city), 1);
     },
   },
 };
