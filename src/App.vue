@@ -8,7 +8,7 @@
         <div class="field is-grouped">
           <div class="control is-expanded">
             <input
-              v-model="city"
+              v-model="cityName"
               type="text"
               name="city"
               id="city"
@@ -17,7 +17,7 @@
             />
           </div>
           <div class="control">
-            <button class="button is-dark">
+            <button @click="fetchWeatherData" class="button is-dark">
               Search
             </button>
           </div>
@@ -27,8 +27,8 @@
       <!-- city cards -->
       <section class="mt-5">
         <div class="columns is-multiline">
-          <div class="column is-4">
-            <city-card></city-card>
+          <div v-for="city in cities" :key="city.id" class="column is-4">
+            <city-card :city="city"></city-card>
           </div>
         </div>
       </section>
@@ -40,6 +40,9 @@
 <script>
 import NavBar from '@/components/Navbar';
 import CityCard from '@/components/CityCard';
+import axios from 'axios';
+
+import { apiKey } from './api';
 
 export default {
   name: 'App',
@@ -50,10 +53,38 @@ export default {
   },
 
   data: () => ({
-    city: '',
+    cityName: '',
+    cities: [],
   }),
 
-  methods: {},
+  methods: {
+    async fetchWeatherData() {
+      try {
+        const response = await axios.get(
+          `http://api.openweathermap.org/data/2.5/weather?q=${this.cityName}&appid=${apiKey}`
+        );
+        const city = response.data;
+        console.log(city);
+
+        // Kelvin degrees to Celsius
+        let temp = city.main.temp;
+        temp = parseFloat(temp - 273.15).toFixed(2);
+        city.main.temp = temp;
+
+        let temp_min = city.main.temp_min;
+        temp_min = parseFloat(temp_min - 273.15).toFixed(2);
+        city.main.temp_min = temp_min;
+
+        let temp_max = city.main.temp_max;
+        temp_max = parseFloat(temp_max - 273.15).toFixed(2);
+        city.main.temp_max = temp_max;
+
+        this.cities.push(city);
+      } catch (error) {
+        console.log(error.code);
+      }
+    },
+  },
 };
 </script>
 
