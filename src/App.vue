@@ -98,22 +98,8 @@ export default {
 
         try {
           const response = await axios.get(endPoint, { params });
-          const city = response.data;
 
-          // Kelvin degrees to Celsius
-          let temp = city.main.temp;
-          temp = parseFloat(temp - 273.15).toFixed(2);
-          city.main.temp = temp;
-
-          let temp_min = city.main.temp_min;
-          temp_min = parseFloat(temp_min - 273.15).toFixed(2);
-          city.main.temp_min = temp_min;
-
-          let temp_max = city.main.temp_max;
-          temp_max = parseFloat(temp_max - 273.15).toFixed(2);
-          city.main.temp_max = temp_max;
-
-          this.cities.push(city);
+          this.cities.push(response.data);
           this.cityName = null;
         } catch (error) {
           // show error message
