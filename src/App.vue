@@ -4,6 +4,7 @@
 
     <div class="section">
       <h2 class="title has-text-centered">Know the climate of your city</h2>
+      <!-- search bar -->
       <section>
         <div class="field is-grouped">
           <div class="control is-expanded">
@@ -14,10 +15,15 @@
               id="city"
               placeholder="Search your city..."
               class="input is-dark"
+              :class="{ 'is-loading': isFetchingData }"
             />
           </div>
           <div class="control">
-            <button @click="fetchWeatherData" class="button is-dark">
+            <button
+              class="button is-dark"
+              :class="{ 'is-loading': isFetchingData }"
+              @click="fetchWeatherData"
+            >
               Search
             </button>
           </div>
@@ -33,7 +39,26 @@
         </div>
       </section>
     </div>
-    <!-- search bar -->
+
+    <div class="modal" :class="{ 'is-active': isModalActive }">
+      <div class="modal-background" @click="isModalActive = false"></div>
+      <div class="modal-content">
+        <article class="message is-danger">
+          <div class="message-header">
+            <p>City not found</p>
+          </div>
+          <div class="message-body">
+            It seems that your city could not be found. Please review that you
+            have written the name of the city correctly
+          </div>
+        </article>
+      </div>
+      <button
+        class="modal-close is-large"
+        aria-label="close"
+        @click="isModalActive = false"
+      ></button>
+    </div>
   </div>
 </template>
 
@@ -42,7 +67,7 @@ import NavBar from '@/components/Navbar';
 import CityCard from '@/components/CityCard';
 import axios from 'axios';
 
-import { apiKey } from './api';
+import { apiKey, endPoint } from './api';
 
 export default {
   name: 'App',
@@ -55,15 +80,24 @@ export default {
   data: () => ({
     cityName: '',
     cities: [],
+
+    // interface
+    isFetchingData: false,
+    isModalActive: false,
   }),
 
   methods: {
     async fetchWeatherData() {
       if (this.cityName) {
+        this.isFetchingData = true;
+
+        const params = {
+          q: this.cityName,
+          appid: apiKey,
+        };
+
         try {
-          const response = await axios.get(
-            `http://api.openweathermap.org/data/2.5/weather?q=${this.cityName}&appid=${apiKey}`
-          );
+          const response = await axios.get(endPoint, { params });
           const city = response.data;
 
           // Kelvin degrees to Celsius
@@ -82,14 +116,19 @@ export default {
           this.cities.push(city);
           this.cityName = null;
         } catch (error) {
-          console.log(error.code);
+          // show error message
+          this.isModalActive = true;
         }
+
+        this.isFetchingData = false;
       }
     },
 
     removeCity(city) {
       this.cities.splice(this.cities.indexOf(city), 1);
     },
+
+    closeModal() {},
   },
 };
 </script>
